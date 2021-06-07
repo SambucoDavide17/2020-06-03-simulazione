@@ -20,7 +20,6 @@ public class Model {
 		
 		dao = new PremierLeagueDAO();
 		mGiocatori = new HashMap<>();
-		dao.listAllPlayers(mGiocatori);
 	}
 	
 	public void creaGrafo(double soglia) {
@@ -28,7 +27,14 @@ public class Model {
 		grafo = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 		Graphs.addAllVertices(grafo, dao.getVertici(mGiocatori, soglia));
 		
-		
+		for(Adiacenza a: dao.getArchi(soglia, mGiocatori)) {
+			if(grafo.getEdge(mGiocatori.get(a.getP1().getPlayerID()), mGiocatori.get(a.getP2().getPlayerID())) == null){
+				if(a.getDeltaMinuti() > 0) 
+					Graphs.addEdge(grafo, mGiocatori.get(a.getP1().getPlayerID()), mGiocatori.get(a.getP2().getPlayerID()), soglia);
+				if(a.getDeltaMinuti() < 0) 
+					Graphs.addEdge(grafo, mGiocatori.get(a.getP2().getPlayerID()), mGiocatori.get(a.getP1().getPlayerID()), soglia * -1);
+			}
+		}
 	}
 	
 	public int vertexNumber() {

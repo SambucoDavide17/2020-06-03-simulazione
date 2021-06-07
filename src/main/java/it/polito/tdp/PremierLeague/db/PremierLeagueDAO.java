@@ -75,9 +75,9 @@ public class PremierLeagueDAO {
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
 				
-				if(mGiocatori.containsKey(res.getInt("PlayerID"))) {
-					risultato.add(mGiocatori.get(res.getInt("PlayerID")));
-				}
+				Player player = new Player(res.getInt("PlayerID"), res.getString("Name"));
+				risultato.add(player);
+				mGiocatori.put(player.getPlayerID(), player);
 			}
 			
 			conn.close();
@@ -88,24 +88,27 @@ public class PremierLeagueDAO {
 		}
 	}
 	
-	public List<Adiacenza> getArchi(double soglia) {
-		String sql = "Select a1.PlayerID, a2.PlayerID, (sum(a1.TimePlayed) - sum(a2.TimePlayed)) as peso "
+	public List<Adiacenza> getArchi(double soglia, Map<Integer, Player> mGiocatori) {
+		String sql = "Select a1.PlayerID as p1, a2.PlayerID as p2, (sum(a1.TimePlayed) - sum(a2.TimePlayed)) as peso "
 				+ "From Actions a1, Actions a2 "
 				+ "Where a1.PlayerID <> a2.PlayerID and a1.MatchID = a2.MatchID and a1.Starts = 1 and a2.Starts = 1 "
 				+ "Group by a1.PlayerID, a2.PlayerID ";
-		return null;
+		List<Adiacenza> risultato = new ArrayList<>();
+		Connection conn = DBConnect.getConnection();
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+				if(mGiocatori.containsKey(res.getInt("p1")) && mGiocatori.containsKey(res.getInt("p2"))) {
+					Adiacenza nuova = new Adiacenza(mGiocatori.get(res.getInt("p1")), mGiocatori.get(res.getInt("p2")), res.getInt("peso"));
+					risultato.add(nuova);
+				}
+			}
+			conn.close();
+			return risultato;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
