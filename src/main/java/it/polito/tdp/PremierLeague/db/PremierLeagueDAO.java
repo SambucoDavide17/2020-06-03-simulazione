@@ -12,7 +12,6 @@ import java.util.Map;
 import it.polito.tdp.PremierLeague.model.Action;
 import it.polito.tdp.PremierLeague.model.Adiacenza;
 import it.polito.tdp.PremierLeague.model.Player;
-import it.polito.tdp.PremierLeague.model.PlayerAndGoal;
 
 public class PremierLeagueDAO {
 	
@@ -62,25 +61,25 @@ public class PremierLeagueDAO {
 		}
 	}
 
-	public List<PlayerAndGoal> getVertici(Map<Integer, Player> mGiocatori, double soglia) {
-		String sql = "Select p.PlayerID, p.Name, sum(a.Goals)/count(*) as gpp "
+	public List<Player> getVertici(Map<Integer, Player> mGiocatori, double soglia) {
+		String sql = "Select p.PlayerID, p.Name "
 				+ "From Players p, Actions a "
 				+ "Where p.PlayerID = a.PlayerID "
-				+ "Group by p.PlayerID, p.Name";
-		List<PlayerAndGoal> risultato = new ArrayList<>();
+				+ "Group by p.PlayerID, p.Name "
+				+ "Having AVG(a.Goals) > ?";
+		List<Player> risultato = new ArrayList<>();
 		Connection conn = DBConnect.getConnection();
 		try {
 			PreparedStatement st = conn.prepareStatement(sql);
+			st.setDouble(1, soglia);
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
 				
 				if(mGiocatori.containsKey(res.getInt("PlayerID"))) {
-					if(res.getDouble("gpp") > soglia) {
-						PlayerAndGoal nuovo = new PlayerAndGoal(mGiocatori.get(res.getInt("PlayerID")), res.getDouble("gpp"));
-						risultato.add(nuovo);
-					}
+					risultato.add(mGiocatori.get(res.getInt("PlayerID")));
 				}
 			}
+			
 			conn.close();
 			return risultato;
 		} catch (SQLException e) {
@@ -90,6 +89,7 @@ public class PremierLeagueDAO {
 	}
 	
 	public List<Adiacenza> getArchi(double soglia) {
+		String sql = "";
 		return null;
 	}
 	

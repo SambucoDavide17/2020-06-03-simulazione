@@ -13,7 +13,7 @@ import it.polito.tdp.PremierLeague.db.PremierLeagueDAO;
 public class Model {
 	
 	PremierLeagueDAO dao;
-	Graph<PlayerAndGoal, DefaultWeightedEdge> grafo;
+	Graph<Player, DefaultWeightedEdge> grafo;
 	Map<Integer, Player> mGiocatori;
 	
 	public Model(){
