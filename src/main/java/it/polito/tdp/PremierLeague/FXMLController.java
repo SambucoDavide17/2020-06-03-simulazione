@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.PremierLeague.model.Model;
+import it.polito.tdp.PremierLeague.model.Player;
+import it.polito.tdp.PremierLeague.model.PlayerEDelta;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -55,7 +57,7 @@ public class FXMLController {
         	return ;
     	}
     	model.creaGrafo(soglia);
-    	txtResult.appendText("Grafo creato!\n");;
+    	txtResult.appendText("Grafo creato!\n");
     	txtResult.appendText("# Vertici: " + model.vertexNumber() + "\n");
     	txtResult.appendText("# Archi: " + model.edgeNumber() + "\n");
 
@@ -68,7 +70,12 @@ public class FXMLController {
 
     @FXML
     void doTopPlayer(ActionEvent event) {
-
+    	txtResult.clear();
+    	txtResult.appendText("TOP PLAYER: " + model.topPlayer() + "\n");
+    	txtResult.appendText("AVVERSARI BATTUTI: " + "\n");
+    	for(PlayerEDelta p: model.Sconfitti()) {
+    		txtResult.appendText(p.toString());
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
