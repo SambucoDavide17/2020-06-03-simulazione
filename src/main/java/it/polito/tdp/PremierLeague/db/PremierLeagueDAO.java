@@ -89,7 +89,10 @@ public class PremierLeagueDAO {
 	}
 	
 	public List<Adiacenza> getArchi(double soglia) {
-		String sql = "";
+		String sql = "Select a1.PlayerID, a2.PlayerID, (sum(a1.TimePlayed) - sum(a2.TimePlayed)) as peso "
+				+ "From Actions a1, Actions a2 "
+				+ "Where a1.PlayerID <> a2.PlayerID and a1.MatchID = a2.MatchID and a1.Starts = 1 and a2.Starts = 1 "
+				+ "Group by a1.PlayerID, a2.PlayerID ";
 		return null;
 	}
 	
