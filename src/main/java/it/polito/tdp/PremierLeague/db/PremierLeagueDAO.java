@@ -5,33 +5,35 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.tdp.PremierLeague.model.Action;
+import it.polito.tdp.PremierLeague.model.Adiacenza;
 import it.polito.tdp.PremierLeague.model.Player;
+import it.polito.tdp.PremierLeague.model.PlayerAndGoal;
 
 public class PremierLeagueDAO {
 	
-	public List<Player> listAllPlayers(){
+	public void listAllPlayers(Map<Integer, Player> mGiocatori){
 		String sql = "SELECT * FROM Players";
-		List<Player> result = new ArrayList<Player>();
 		Connection conn = DBConnect.getConnection();
 
 		try {
 			PreparedStatement st = conn.prepareStatement(sql);
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
+				if(!mGiocatori.containsKey(res.getInt("PlayerID"))) {
 
-				Player player = new Player(res.getInt("PlayerID"), res.getString("Name"));
-				
-				result.add(player);
+					Player player = new Player(res.getInt("PlayerID"), res.getString("Name"));
+					mGiocatori.put(player.getPlayerID(), player);
+				}
 			}
 			conn.close();
-			return result;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return null;
 		}
 	}
 	
@@ -59,4 +61,48 @@ public class PremierLeagueDAO {
 			return null;
 		}
 	}
+
+	public List<PlayerAndGoal> getVertici(Map<Integer, Player> mGiocatori, double soglia) {
+		String sql = "Select p.PlayerID, p.Name, sum(a.Goals)/count(*) as gpp "
+				+ "From Players p, Actions a "
+				+ "Where p.PlayerID = a.PlayerID "
+				+ "Group by p.PlayerID, p.Name";
+		List<PlayerAndGoal> risultato = new ArrayList<>();
+		Connection conn = DBConnect.getConnection();
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+				
+				if(mGiocatori.containsKey(res.getInt("PlayerID"))) {
+					if(res.getDouble("gpp") > soglia) {
+						PlayerAndGoal nuovo = new PlayerAndGoal(mGiocatori.get(res.getInt("PlayerID")), res.getDouble("gpp"));
+						risultato.add(nuovo);
+					}
+				}
+			}
+			conn.close();
+			return risultato;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<Adiacenza> getArchi(double soglia) {
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

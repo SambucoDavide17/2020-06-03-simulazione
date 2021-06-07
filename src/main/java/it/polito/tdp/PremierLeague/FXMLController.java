@@ -44,6 +44,20 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	double soglia = 0.0;
+    	try {
+    		soglia = Double.parseDouble(txtGoals.getText());
+    	} catch (NumberFormatException e) {
+    		txtResult.clear();
+        	txtResult.appendText("Inserisci un valore numerico!\n");
+        	return ;
+    	}
+    	model.creaGrafo(soglia);
+    	txtResult.appendText("Grafo creato!\n");;
+    	txtResult.appendText("# Vertici: " + model.vertexNumber() + "\n");
+    	txtResult.appendText("# Archi: " + model.edgeNumber() + "\n");
 
     }
 
