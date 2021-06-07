@@ -23,6 +23,7 @@ public class Model {
 	Player top;
 	
 	List<Player> dreamTaem;
+	int bestGrado;
 	
 	public Model(){
 		
@@ -87,19 +88,52 @@ public class Model {
 	
 	public List<Player> DreamTeam(int nPlayer){
 		
-		dreamTaem = null;
+		dreamTaem = new ArrayList<>();
+		bestGrado = 0;
 		List<Player> parziale = new ArrayList<>();
 		
-		cerca(parziale, 1, nPlayer);
+		cerca(parziale, new ArrayList<Player>(grafo.vertexSet()), nPlayer);
 		return dreamTaem;
 	}
 	
-	public void cerca(List<Player> parziale, int livello, int nPlayer) {
+	public void cerca(List<Player> parziale, List<Player> giocatori, int nPlayer) {
 		
-		
+		if(parziale.size() == nPlayer) {
+			if(dreamTaem == null) {
+				dreamTaem = new ArrayList<>(parziale);
+				return;
+			}
+			int grado = getGrado(parziale);
+			if(grado > bestGrado) {
+				dreamTaem = new ArrayList<>(parziale);
+				bestGrado = grado;
+				return;
+			}
+			return;
+		}
+		for(Player p: giocatori) {
+			if(!parziale.contains(p)) {
+				parziale.add(p);
+				List<Player> rimasti = new ArrayList<>(giocatori);
+				rimasti.removeAll(Graphs.successorListOf(grafo, p));
+				cerca(parziale, rimasti, nPlayer);
+			}
+		}
 	}
 
-	
+	private int getGrado(List<Player> team) {
+		
+		int grado = 0;
+		for(Player p: team) {
+			for(DefaultWeightedEdge e: grafo.outgoingEdgesOf(p)) {
+				grado += grafo.getEdgeWeight(e);
+			}
+			for(DefaultWeightedEdge e: grafo.incomingEdgesOf(p)) {
+				grado -= grafo.getEdgeWeight(e);
+			}
+		}
+		return grado;
+	}
 	
 	
 	

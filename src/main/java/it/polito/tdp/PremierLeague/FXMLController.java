@@ -65,6 +65,11 @@ public class FXMLController {
 
     @FXML
     void doDreamTeam(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	//if(model.creaGrafo(2.3) == null) {
+    		
+    	//}
 
     }
 
