@@ -67,10 +67,24 @@ public class FXMLController {
     void doDreamTeam(ActionEvent event) {
     	
     	txtResult.clear();
-    	//if(model.creaGrafo(2.3) == null) {
-    		
-    	//}
-
+    	if(model.getGrafo() == null) {
+    		txtResult.appendText("Prima creare il grafo!\n");
+    		return;
+    	}
+    	int nPlayer = 0;
+    	try {
+    		nPlayer = Integer.parseInt(txtK.getText());
+    	} catch (NumberFormatException e) {
+    		txtResult.clear();
+        	txtResult.appendText("Inserisci un valore numerico intero!\n");
+        	return ;
+    	}
+    	txtResult.appendText("Dream team: \n");
+    	for(Player p: model.DreamTeam(nPlayer)){
+    		txtResult.appendText(p.toString() + "\n");
+    	}
+    	txtResult.appendText("Grado di titolarità: \n");
+    	txtResult.appendText(model.getBestGrado() + "\n");
     }
 
     @FXML

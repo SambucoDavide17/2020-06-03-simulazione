@@ -54,6 +54,10 @@ public class Model {
 		return grafo.edgeSet().size();
 	}
 	
+	public Graph<Player, DefaultWeightedEdge> getGrafo(){
+		return grafo;
+	}
+	
 	public Player topPlayer() {
 		
 		Player topPlayer = null;
@@ -135,20 +139,7 @@ public class Model {
 		return grado;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public int getBestGrado() {
+		return bestGrado;
+	}	
 }
